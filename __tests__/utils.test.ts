@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { generateSlug, makeUniqueSlug, formatRelativeTime } from "@/lib/utils";
 
 // ============================================================
@@ -37,6 +37,10 @@ describe("generateSlug", () => {
   it("strips leading and trailing hyphens after special character removal", () => {
     expect(generateSlug("!@hello-world!@")).toBe("hello-world");
   });
+
+  it("strips leading and trailing hyphens after cleanup", () => {
+    expect(generateSlug("---Hello World---")).toBe("hello-world");
+  });
 });
 
 // ============================================================
@@ -70,40 +74,37 @@ describe("makeUniqueSlug", () => {
 // ============================================================
 
 describe("formatRelativeTime", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2024-01-01T12:00:00Z"));
+  });
+
   afterEach(() => {
     vi.useRealTimers();
   });
 
   it("returns 'just now' for dates less than 1 minute ago", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-01T12:00:00Z"));
     const date = new Date("2024-01-01T11:59:30Z"); // 30 seconds ago
     expect(formatRelativeTime(date)).toBe("just now");
   });
 
   it("returns '{n}m ago' for dates 1-59 minutes ago", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-01T12:00:00Z"));
     const date = new Date("2024-01-01T11:55:00Z"); // 5 minutes ago
     expect(formatRelativeTime(date)).toBe("5m ago");
   });
 
   it("returns '{n}h ago' for dates 1-23 hours ago", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2024-01-01T12:00:00Z"));
     const date = new Date("2024-01-01T10:00:00Z"); // 2 hours ago
     expect(formatRelativeTime(date)).toBe("2h ago");
   });
 
   it("returns '{n}d ago' for dates 1-29 days ago", () => {
-    vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-01-16T12:00:00Z"));
     const date = new Date("2024-01-01T12:00:00Z"); // 15 days ago
     expect(formatRelativeTime(date)).toBe("15d ago");
   });
 
   it("returns toLocaleDateString() format for dates 30+ days ago", () => {
-    vi.useFakeTimers();
     vi.setSystemTime(new Date("2024-03-01T12:00:00Z"));
     const date = new Date("2024-01-01T12:00:00Z"); // 60 days ago
     expect(formatRelativeTime(date)).toBe(date.toLocaleDateString());

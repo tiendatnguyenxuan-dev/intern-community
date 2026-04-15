@@ -23,7 +23,7 @@ export function VoteButton({
 
   if (!session) {
     return (
-      <span className="inline-flex items-center gap-1 text-sm text-gray-400">
+      <span className="inline-flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500">
         <TriangleIcon />
         {count}
       </span>
@@ -41,32 +41,18 @@ export function VoteButton({
           ? "Remove vote"
           : "Upvote this module"
       }
+      aria-busy={isLoading}
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium transition-colors
         ${voted
-          ? "bg-orange-100 text-orange-600 hover:bg-orange-200"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          ? "bg-orange-100 text-orange-600 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-900/50"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
         }
         disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {isLoading ? <SpinnerIcon /> : <TriangleIcon filled={voted} />}
       {count}
+      {isLoading && <span className="sr-only">Updating vote</span>}
     </button>
-  );
-}
-
-function TriangleIcon({ filled = false }: { filled?: boolean }) {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden="true"
-    >
-      <path d="M6 1 L11 10 L1 10 Z" />
-    </svg>
   );
 }
 
@@ -85,6 +71,22 @@ function SpinnerIcon() {
     >
       <circle cx="6" cy="6" r="4.5" strokeOpacity="0.3" />
       <path d="M6 1.5 A4.5 4.5 0 0 1 10.5 6" />
+    </svg>
+  );
+}
+
+function TriangleIcon({ filled = false }: { filled?: boolean }) {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden="true"
+    >
+      <path d="M6 1 L11 10 L1 10 Z" />
     </svg>
   );
 }
